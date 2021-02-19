@@ -77,6 +77,55 @@ describe('domain', function () {
 
     });
 
+    describe('with custom "structureLoader" method', function () {
+
+      describe('creating an object of the wrong interface', function () {
+
+        it('it should throw an error', function () {
+
+          expect(function () {
+            api({
+              domainPath: __dirname + '/../integration/fixture/set1',
+              structureLoader: {
+              },
+            })
+          }).to.throwError('/structureLoader/');
+
+        });
+      });
+
+      describe('creating an object of the right interface', function () {
+
+        it('it should return as expected', function () {
+
+          var domain = api({
+            domainPath: __dirname + '/../integration/fixture/set1',
+            structureLoader: function() {
+            }});
+          expect(domain).to.be.a('object');
+          expect(domain.on).to.be.a('function');
+          expect(domain.eventStore).to.be.an('object');
+          expect(domain.structureLoader).to.be.an('function');
+          expect(domain.eventStore.on).to.be.a('function');
+          expect(domain.aggregateLock).to.be.an('object');
+          expect(domain.aggregateLock.on).to.be.a('function');
+          expect(domain.defineCommand).to.be.a('function');
+          expect(domain.defineEvent).to.be.a('function');
+          expect(domain.idGenerator).to.be.a('function');
+          expect(domain.aggregateIdGenerator).to.be.a('function');
+          expect(domain.onEvent).to.be.a('function');
+          expect(domain.init).to.be.a('function');
+          expect(domain.handle).to.be.a('function');
+
+          expect(domain.options.retryOnConcurrencyTimeout).to.eql(800);
+          expect(domain.options.commandRejectedEventName).to.eql('commandRejected');
+          expect(domain.options.snapshotThreshold).to.eql(100);
+
+        });
+      });
+    });
+
+
     describe('with "eventStore" factory method', function () {
 
       describe('creating an object of the wrong interface', function () {
@@ -690,7 +739,7 @@ describe('domain', function () {
         it('it should return an event as expected', function () {
 
           var cmd = { i: 'cmdId', n: 'cmdName', ai: 'aggregateId', c: 'context', p: 'payload', r: 'revision', v: 'version', m: 'meta' };
-          var err = new AggregateDestroyedError('my err', { mo: 're' });
+          var err = new AggregateDestroyedError('my err', { mo: 're', aggregateRevision: 3 });
 
           var evt = domain.createCommandRejectedEvent(cmd, err);
 
@@ -700,7 +749,7 @@ describe('domain', function () {
           expect(evt.ai).to.eql(cmd.ai);
           expect(evt.c).to.eql(cmd.c);
           expect(evt.a).to.eql(cmd.a);
-          expect(evt.r).not.to.be.ok();
+          expect(evt.r).to.eql(3);
           expect(evt.v).not.to.be.ok();
           expect(evt.m).to.eql(cmd.m);
           expect(evt.p.command).to.eql(cmd);
@@ -825,7 +874,89 @@ describe('domain', function () {
         });
 
       });
+    });
 
+    describe('loading custom structure', function() {
+      describe('in a synchronous way', function() {
+        it('it should return as expected', function(done) {
+          var domain = api({
+            domainPath: __dirname + '/../integration/fixture/set1',
+            structureLoader: function(options) {
+              var context = new options.definitions.Context({
+                name: 'ctx',
+              });
+              var aggregate = new options.definitions.Aggregate({
+                name: 'agg'
+              }, function() {});
+              context.addAggregate(aggregate);
+              var command = new options.definitions.Command({
+                name: 'cmd'
+              }, function() {});
+              var event = new options.definitions.Event({
+                name: 'evt'
+              }, function() {});
+              aggregate.addCommand(command);
+              aggregate.addEvent(event);
+              return {
+                ctx: context
+              }
+            }
+          });
+
+          domain.init(function(){
+            var contexts = domain.getInfo().contexts;
+            expect(contexts.length).to.eql(1);
+            expect(contexts[0].name).to.eql('ctx');
+            expect(contexts[0].aggregates.length).to.eql(1);
+            expect(contexts[0].aggregates[0].name).to.eql('agg');
+            expect(contexts[0].aggregates[0].commands.length).to.eql(1);
+            expect(contexts[0].aggregates[0].commands[0].name).to.eql('cmd');
+            expect(contexts[0].aggregates[0].events.length).to.eql(1);
+            expect(contexts[0].aggregates[0].events[0].name).to.eql('evt');
+            done();
+          })
+
+        });
+      });
+      describe('in a asynchronous way', function() {
+        it('it should return as expected', function(done) {
+          var domain = api({
+            domainPath: __dirname + '/../integration/fixture/set1',
+            structureLoader: function(options, callback) {
+              var context = new options.definitions.Context({
+                name: 'ctx',
+              });
+              var aggregate = new options.definitions.Aggregate({
+                name: 'agg'
+              }, function() {});
+              context.addAggregate(aggregate);
+              var command = new options.definitions.Command({
+                name: 'cmd'
+              }, function() {});
+              var event = new options.definitions.Event({
+                name: 'evt'
+              }, function() {});
+              aggregate.addCommand(command);
+              aggregate.addEvent(event);
+              callback(null, { ctx: context });
+            }
+          });
+
+          domain.init(function(){
+            var contexts = domain.getInfo().contexts;
+            expect(contexts.length).to.eql(1);
+            expect(contexts[0].name).to.eql('ctx');
+            expect(contexts[0].aggregates.length).to.eql(1);
+            expect(contexts[0].aggregates[0].name).to.eql('agg');
+            expect(contexts[0].aggregates[0].commands.length).to.eql(1);
+            expect(contexts[0].aggregates[0].commands[0].name).to.eql('cmd');
+            expect(contexts[0].aggregates[0].events.length).to.eql(1);
+            expect(contexts[0].aggregates[0].events[0].name).to.eql('evt');
+            done();
+          })
+
+        });
+      });
     });
 
     describe('handling a command', function () {

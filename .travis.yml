@@ -1,10 +1,5 @@
 sudo: false
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-set-default
-
 before_install:
   - wget http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.tar.gz -O /tmp/dynamodb_local_latest.tar.gz
   - tar -xzf /tmp/dynamodb_local_latest.tar.gz -C /tmp
@@ -18,11 +13,9 @@ services:
 
 language: node_js
 node_js:
-  - "0.10"
-  - "0.12"
-  - "4"
-  - "6"
-  - "8"
+  - "10"
+  - "12"
+  - "14"
 
 branches:
   only:

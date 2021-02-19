@@ -1,3 +1,114 @@
+## [v2.14.79](https://github.com/adrai/node-cqrs-domain/compare/v2.14.78...v2.14.79)
+- mongodb: useUnifiedTopology
+
+## [v2.14.78](https://github.com/adrai/node-cqrs-domain/compare/v2.14.77...v2.14.78)
+- catch throwing errors during command handling
+
+## [v2.14.77](https://github.com/adrai/node-cqrs-domain/compare/v2.14.76...v2.14.77)
+- Fix for validation error(s) swallowing thanks to [ssipos90](https://github.com/ssipos90)
+
+## [v2.14.76](https://github.com/adrai/node-cqrs-domain/compare/v2.14.75...v2.14.76)
+- update eventstore
+
+## [v2.14.75](https://github.com/adrai/node-cqrs-domain/compare/v2.14.74...v2.14.75)
+- update eventstore
+
+## [v2.14.74](https://github.com/adrai/node-cqrs-domain/compare/v2.14.73...v2.14.74)
+- update deps and eventstore
+
+## [v2.14.73](https://github.com/adrai/node-cqrs-domain/compare/v2.14.72...v2.14.73)
+- add edge case error handling on main command handler
+
+## [v2.14.72](https://github.com/adrai/node-cqrs-domain/compare/v2.14.71...v2.14.72)
+- update deps and eventstore
+
+## [v2.14.71](https://github.com/adrai/node-cqrs-domain/compare/v2.14.7...v2.14.71)
+- update eventstore
+
+## [v2.14.7](https://github.com/adrai/node-cqrs-domain/compare/v2.14.6...v2.14.7)
+- prepare previousModel before evaluating preConditions in order to prevent model mutation inside them 
+
+## [v2.14.6](https://github.com/adrai/node-cqrs-domain/compare/v2.14.5...v2.14.6)
+- updated node-eventstore and added optional position property to event
+
+## [v2.14.5](https://github.com/adrai/node-cqrs-domain/compare/v2.14.4...v2.14.5)
+- updated node-eventstore and lodash dependencies
+
+## [v2.14.4](https://github.com/adrai/node-cqrs-domain/compare/v2.14.3...v2.14.4)
+- pass error constructors to customLoader
+
+## [v2.14.3](https://github.com/adrai/node-cqrs-domain/compare/v2.14.2...v2.14.3)
+- update node-eventstore dependency
+
+## [v2.14.2](https://github.com/adrai/node-cqrs-domain/compare/v2.14.0...v2.14.1)
+- add option for asynchronous custom structureLoader thank to [nanov](https://github.com/nanov)
+
+## [v2.14.1](https://github.com/adrai/node-cqrs-domain/compare/v2.14.0...v2.14.1)
+- Schema validation rules structure loader bug fix [#127](https://github.com/adrai/node-cqrs-domain/pull/127) thanks to [OrH](https://github.com/OrH)
+
+## [v2.14.0](https://github.com/adrai/node-cqrs-domain/compare/v2.13.1...v2.14.0)
+- add option to add custom structureLoader implementation [#125](https://github.com/adrai/node-cqrs-domain/pull/125) thanks to [nanov](https://github.com/nanov)
+
+## [v2.13.1](https://github.com/adrai/node-cqrs-domain/compare/v2.12.3...v2.13.1)
+- Introduce externallyLoaded option to context, and load those separately [#121](https://github.com/adrai/node-cqrs-domain/pull/121) thanks to [nanov](https://github.com/nanov)
+
+## [v2.12.3](https://github.com/adrai/node-cqrs-domain/compare/v2.12.2...v2.12.3)
+- update eventstore
+
+## [v2.12.2](https://github.com/adrai/node-cqrs-domain/compare/v2.12.1...v2.12.2)
+- generated rejectedCommand for AggregateDestroyedError now contains revision information (if provided)
+
+## [v2.12.1](https://github.com/adrai/node-cqrs-domain/compare/v2.12.0...v2.12.1)
+- Do not set revision when persistence is disabled [#120](https://github.com/adrai/node-cqrs-domain/pull/120) thanks to [nanov](https://github.com/nanov)
+
+## [v2.12.0](https://github.com/adrai/node-cqrs-domain/compare/v2.11.4...v2.12.0)
+- introduce event transformers; to give possibility to be GDPR compliant
+
+## [v2.11.4](https://github.com/adrai/node-cqrs-domain/compare/v2.11.2...v2.11.4)
+- remove deprecated option max_attempts from redis options
+
+## [v2.11.2](https://github.com/adrai/node-cqrs-domain/compare/v2.11.1...v2.11.2)
+- update eventstore
+
+## [v2.11.1](https://github.com/adrai/node-cqrs-domain/compare/v2.11.0...v2.11.1)
+- update eventstore
+
+## [v2.11.0](https://github.com/adrai/node-cqrs-domain/compare/v2.10.0...v2.11.0)
+- compatibility with new mongodb version (3.x)
+
+## [v2.10.0](https://github.com/adrai/node-cqrs-domain/compare/v2.9.8...v2.10.0)
+- Use of node loader extensions for valid file types of parsing definition sources [#113](https://github.com/adrai/node-cqrs-domain/pull/113) thanks to [repkins](https://github.com/repkins)
+
+## [v2.9.8](https://github.com/adrai/node-cqrs-domain/compare/v2.9.7...v2.9.8)
+- do not verify the revision when disablePersistence is set to true [#112](https://github.com/adrai/node-cqrs-domain/issues/112) thanks to [repkins](https://github.com/repkins)
+
+## [v2.9.7](https://github.com/adrai/node-cqrs-domain/compare/v2.9.6...v2.9.7)
+- update eventstore
+
+## [v2.9.6](https://github.com/adrai/node-cqrs-domain/compare/v2.9.5...v2.9.6)
+- fixing definePreLoadCondition handing commands with version [#111](https://github.com/adrai/node-cqrs-domain/issues/111) thanks to [repkins](https://github.com/repkins)
+
+## [v2.9.5](https://github.com/adrai/node-cqrs-domain/compare/v2.9.4...v2.9.5)
+- update eventstore
+
+## [v2.9.4](https://github.com/adrai/node-cqrs-domain/compare/v2.9.3...v2.9.4)
+- update eventstore
+
+## [v2.9.3](https://github.com/adrai/node-cqrs-domain/compare/v2.9.2...v2.9.3)
+- update eventstore
+
+## [v2.9.2](https://github.com/adrai/node-cqrs-domain/compare/v2.9.1...v2.9.2)
+- update eventstore
+
+## [v2.9.1](https://github.com/adrai/node-cqrs-domain/compare/v2.9.0...v2.9.1)
+- fixing dynamodb DocumentClient initialization [#105](https://github.com/adrai/node-cqrs-domain/pull/105) thanks to [Glockenbeat](https://github.com/Glockenbeat)
+
+## [v2.9.0](https://github.com/adrai/node-cqrs-domain/compare/v2.8.1...v2.9.0)
+- Support default exports [#104](https://github.com/adrai/node-cqrs-domain/pull/#104) thanks to [IRT-fbachmann](https://github.com/IRT-fbachmann)
+
+## [v2.8.1](https://github.com/adrai/node-cqrs-domain/compare/v2.8.0...v2.8.1)
+- fix aggregateLock [#103](https://github.com/adrai/node-cqrs-domain/pull/#103) thanks to [emmkong](https://github.com/emmkong)
+
 ## [v2.8.0](https://github.com/adrai/node-cqrs-domain/compare/v2.7.0...v2.8.0)
 - dynamodb aggregateLock implementation [#100](https://github.com/adrai/node-cqrs-domain/pull/#100) thanks to [emmkong](https://github.com/emmkong)
 

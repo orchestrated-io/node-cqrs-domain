@@ -1,3 +1,32 @@
+# ⚠️ IMPORTANT NEWS! 📰
+
+I’ve been dealing with CQRS, event-sourcing and DDD long enough now that I don’t need working with it anymore unfortunately, so at least for now this my formal farewell!
+
+I want to thank everyone who has contributed in one way or another.
+Especially...
+
+- [Jan](https://github.com/jamuhl), who introduced me to this topic.
+- [Dimitar](https://github.com/nanov), one of the last bigger contributors and maintainer.
+- My last employer, who gave me the possibility to use all these CQRS modules in a big Cloud-System.
+- My family and friends, who very often came up short.
+
+Finally, I would like to thank [Golo Roden](https://github.com/goloroden), who was there very early at the beginning of my CQRS/ES/DDD journey and is now here again to take over these modules.
+
+Golo Roden is the founder, CTO and managing director of [the native web](https://www.thenativeweb.io/), a company specializing in native web technologies. Among other things, he also teaches CQRS/ES/DDD etc. and based on his vast knowledge, he brought wolkenkit to life.
+[wolkenkit](https://wolkenkit.io) is a CQRS and event-sourcing framework based on Node.js. It empowers you to build and run scalable distributed web and cloud services that process and store streams of domain events.
+
+With this step, I can focus more on [i18next](https://www.i18next.com), [locize](https://locize.com) and [localistars](https://localistars.com). I'm happy about that. 😊
+
+So, there is no end, but the start of a new phase for my CQRS modules. 😉
+
+I wish you all good luck on your journey.
+
+Who knows, maybe we'll meet again in a github issue or PR at [i18next](https://github.com/i18next/i18next) 😉
+
+
+[Adriano Raiano](https://twitter.com/adrirai)
+
+---
 
 # Introduction
 
@@ -174,7 +203,11 @@ It can be very useful as domain component if you work with (d)ddd, cqrs, eventde
 			prefix: 'domain_aggregate_lock',            // optional
 			timeout: 10000                              // optional
 			// password: 'secret'                          // optional
-	  }
+	  },
+
+	  // optional, default false
+	  // resolves valid file types from loader extensions instead of default values while parsing definition files
+	  useLoaderExtensions: true
 	});
 
 ## Using factory methods for event store or / and aggregate lock in domain definition
@@ -254,6 +287,29 @@ When using factory methods, the objects they return are required to implement th
 	  f: function
 	  p: property
 
+
+## Using custom structure loader function
+You can also replace the built-in structure loader with one that suits your needs.
+To do that, you need to include a loading method in the options object passed to the domain constructor.
+
+	// options will contain a the domainPath, validatorExtension, and useLoaderExtensions options passed to the constructor
+	// as well as a definition object containing all the constructors of the domain components  ( Context, Aggregate etc. ) and error constructors ( inside errors )
+	function myCustomLoader(options) {
+		return {
+			myContext:  new Context({ name: 'myContext' }).addAggregate(new Aggregate({ name : 'agg' }, function(){}).addCommand({ name: 'cmd' }, function(){}))
+		}
+		// or, more probably 
+		return myExternalCoolLoader(options.domainPath, options.definitions);
+	}
+	// or async
+	function myCustomLoaderAsync(options, callback) {
+		callback(null, myExternalCoolLoader(options.domainPath, options.definitions));
+	}
+
+	var domain = require('cqrs-domain')({
+	  domainPath: '/path/to/my/files',
+		structureLoader: myCustomLoader
+	});
 
 ## Exposed errors
 You can use this for example in you custom command handlers.
@@ -378,7 +434,10 @@ The values describes the path to that property in the event message.
 	  meta: 'meta',
 
 	  // optional, if defined the commit date of the eventstore will be saved in this value
-	  commitStamp: 'commitStamp'
+	  commitStamp: 'commitStamp',
+
+	  // optional, if defined and the eventstore db implemntation supports this the position of the event in the eventstore will be saved in this value
+	  position: 'position'
 	});
 
 
@@ -649,6 +708,18 @@ After the initialization you can request the domain information:
 	  name: 'hr'
 	});
 
+### Externally loaded context ( self-loaded ) 
+
+	A special option to define a context with all its aggregates, commands, events and rules exists by adding the externallyLoaded option to the context :
+
+	module.exports = require('cqrs-domain').defineContext({
+	  // optional, default is the directory name
+	  name: 'hr',
+	  externallyLoaded: true
+	});
+
+	When doing so the context will be added 'as-is' to the domain, this means it won't go trough the normal tree loading and parsing process.
+	This option is aimed mainly at plugin developers, as it leaves the responsibility of structuring the domain right in the hand of the one defining the context ( most-probably a plug-in ).
 
 ## Aggregate
 
@@ -725,6 +796,42 @@ After the initialization you can request the domain information:
 	  aggregate.set('firstname', names[0]);
 	  aggregate.set('lastname', names[1]);
 	})
+    // optionally, define committingSnapshotTransformer (i.e. for GDPR: to encrypt data in storage)
+  	.defineCommittingSnapshotTransformer({
+	  version: 1
+	}, function (data) {
+	  // data is the snapshot data
+	  data.firstname = encrypt(data.firstname);
+    return data;
+	})
+    // or async
+	.defineCommittingSnapshotTransformer({
+	  version: 1
+	}, function (data, callback) {
+	  // data is the snapshot data
+	  encrypt(data.firstname, function (err, encrypted) {
+      data.firstname = encrypted;
+      callback(err, data);
+    });
+	})
+    // optionally, define loadingSnapshotTransformer (i.e. for GDPR: to decrypt stored data)
+	.defineLoadingSnapshotTransformer({
+	  version: 1
+	}, function (data) {
+	  // data is the snapshot data
+	  data.firstname = decrypt(data.firstname);
+    return data;
+	})
+    // or async
+	.defineLoadingSnapshotTransformer({
+	  version: 1
+	}, function (data, callback) {
+	  // data is the snapshot data
+	  decrypt(data.firstname, function (err, decrypted) {
+      data.firstname = decrypted;
+      callback(err, data);
+    });
+	})
 	// optionally, define idGenerator function for new aggregate ids
 	// sync
 	.defineAggregateIdGenerator(function () {
@@ -771,7 +878,7 @@ To extend tv4 just catch the validator before having initialized the domain:
       });
 
       // or other schemas
-      validator.addSchema({ 'mySharedSchema'; { /* the schema json */ } });
+      validator.addSchema({ 'mySharedSchema': { /* the schema json */ } });
       validator.addSchema('myOtherSharedSchema', { /* the schema json */ });
 
       // or replace the core valitator
@@ -797,7 +904,7 @@ To extend tv4 just catch the validator before having initialized the domain:
             }
           });
         };
-                   
+
       });
 
     });
@@ -1058,6 +1165,68 @@ This is the place where you should manipulate your aggregate.
 	});
 
 
+## EventTransformer
+i.e. useful for GDPR relevant data... to have your data encrypted in the eventstore
+
+  // i.e. encrypt
+  module.exports = require('cqrs-domain').defineCommittingEventTransformer({
+	  // optional, default is file name without extension
+	  name: 'enteredNewPerson',
+
+	  // optional, default 0
+	  version: 3
+	},
+	// passing a function is optional
+	function (evt) {
+	  evt.payload.firstname = encrypt(evt.payload.firstname);
+    return evt;
+	});
+  // or async
+  module.exports = require('cqrs-domain').defineCommittingEventTransformer({
+	  // optional, default is file name without extension
+	  name: 'enteredNewPerson',
+
+	  // optional, default 0
+	  version: 3
+	},
+	// passing a function is optional
+	function (evt, callback) {
+	  encrypt(evt.payload.firstname, function (err, encrypted) {
+      evt.payload.firstname = encrypted;
+      callback(err, evt);
+    });
+	});
+
+  // i.e decrypt
+	module.exports = require('cqrs-domain').defineLoadingEventTransformer({
+	  // optional, default is file name without extension
+	  name: 'enteredNewPerson',
+
+	  // optional, default 0
+	  version: 3
+	},
+	// passing a function is optional
+	function (evt) {
+	  evt.payload.firstname = decrypt(evt.payload.firstname);
+    return evt;
+	});
+  // or async
+  module.exports = require('cqrs-domain').defineLoadingEventTransformer({
+	  // optional, default is file name without extension
+	  name: 'enteredNewPerson',
+
+	  // optional, default 0
+	  version: 3
+	},
+	// passing a function is optional
+	function (evt, callback) {
+	  decrypt(evt.payload.firstname, function (err, decrypted) {
+      evt.payload.firstname = decrypted;
+      callback(err, evt);
+    });
+	});
+
+
 ## Command Handler (Be careful!!!)
 Is your use case not solvable without a custom command handling? Sagas? Micro-Services?
 
@@ -1092,12 +1261,34 @@ Is your use case not solvable without a custom command handling? Sagas? Micro-Se
 	  });
 	});
 
+## ES6 default exports
+Importing ES6 style default exports is supported for all definitions where you also use `module.exports`:
+```
+module.exports = defineContext({...});
+```
+works as well as
+```
+exports.default = defineContext({...});
+```
+as well as (must be transpiled by babel or tsc to be runnable in node)
+```
+export default defineContext({...});
+```
+
+Also:
+```
+exports.default = defineAggregate({...});
+exports.default = defineCommand({...});
+exports.default = defineEvent({...});
+// etc...
+```
+Exports other than the default export are then ignored by this package's structure loader.
 
 [Release notes](https://github.com/adrai/node-cqrs-domain/blob/master/releasenotes.md)
 
 # License
 
-Copyright (c) 2017 Adriano Raiano
+Copyright (c) 2018 Adriano Raiano
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
