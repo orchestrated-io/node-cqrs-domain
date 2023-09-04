@@ -45,18 +45,18 @@
     "eventdenormalizer",
     "domain"
   ],
-  "homepage": "https://github.com/adrai/node-cqrs-domain",
+  "homepage": "https://github.com/orchestrated-io/node-cqrs-domain",
   "repository": {
     "type": "git",
-    "url": "git@github.com:adrai/node-cqrs-domain.git"
+    "url": "git@github.com:orchestrated-io/node-cqrs-domain.git"
   },
   "bugs": {
-    "url": "https://github.com/adrai/node-cqrs-domain/issues"
+    "url": "https://github.com/orchestrated-io/node-cqrs-domain/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://raw.github.com/adrai/node-cqrs-domain/master/licence"
+      "url": "https://raw.github.com/orchestrated-io/node-cqrs-domain/master/licence"
     }
   ],
   "scripts": {
