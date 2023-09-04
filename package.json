@@ -1,7 +1,7 @@
 {
-  "author": "adrai",
+  "author": "orchestrated-admin",
   "name": "@orchestrated-io/cqrs-domain",
-  "version": "2.14.79",
+  "version": "2.14.79p1",
   "private": false,
   "main": "index.js",
   "engines": {
@@ -47,8 +47,11 @@
   ],
   "homepage": "https://github.com/orchestrated-io/node-cqrs-domain",
   "repository": {
-    "type": "git",
     "url": "git@github.com:orchestrated-io/node-cqrs-domain.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "bugs": {
     "url": "https://github.com/orchestrated-io/node-cqrs-domain/issues"
