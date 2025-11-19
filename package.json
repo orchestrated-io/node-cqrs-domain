@@ -50,8 +50,8 @@
     "url": "git@github.com:orchestrated-io/node-cqrs-domain.git"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
+    "registry": "https://npm.pkg.github.com/",
+    "access": "private"
   },
   "bugs": {
     "url": "https://github.com/orchestrated-io/node-cqrs-domain/issues"
